@@ -2,6 +2,7 @@
 
 #!/bin/bash
 
+# Definimos un array con las opciones del menú. Cada opción es una cadena con dos partes separadas por el carácter '|': el nombre de la opción y el comando correspondiente.
 opciones=(
     "Mostrar directorio:|ls"
     "Mostrar calendario:|cal"
@@ -14,31 +15,26 @@ opciones=(
     "Archivos que acaban en dos dígitos:|ls *[0-9][0-9].*"
     "Archivos que acaban en una mayúscula:|ls *[A-Z].*"
     "Archivos que acaban en una minúscula o mayúscula:|ls *[a-zA-Z].*"
-    "Ejecutar script menubase-simplificado.sh:| ./menubase-simplificado.sh"
+    "Ejecutar script menubase-simplificado.sh:|./menubase-simplificado.sh"
     "Salir:|exit 0"
 )
-
-# -eq es un operador de comparación en Bash que significa "igual a". Aquí están los otros operadores de comparación con sus traducciones en inglés y español:
-
-#     -ne: not equal to (no igual a)
-#     -lt: less than (menor que)
-#     -le: less than or equal to (menor o igual que)
-#     -gt: greater than (mayor que)
-#     -ge: greater than or equal to (mayor o igual que)
 
 while true; do
     clear
     echo "Ingrese el número de la opción deseada:"
     for i in ${!opciones[@]}; do
-        echo "$i. ${opciones[$i]%%|*}"
+        echo "$i. ${opciones[$i]%%|*}" # Imprimimos el índice de la opción y su nombre (sin el comando correspondiente).
     done
     read opcion
 
-    if [ $opcion -ge 0 ] && [ $opcion -lt ${#opciones[@]} ]; then
+    # Validamos que la opción ingresada sea un número válido dentro del rango de opciones.
+    if [[ $opcion =~ ^[0-9]+$ ]] && [ $opcion -ge 0 ] && [ $opcion -lt ${#opciones[@]} ]; then
         clear
-        comando="${opciones[$opcion]#*|}"
+        comando="${opciones[$opcion]#*|}" # Obtenemos el comando correspondiente a la opción seleccionada.
         echo "El comando es: $comando"
         read -p "¿Desea ejecutar este comando en una nueva consola? (s/n): " respuesta
+
+        # Si el usuario desea ejecutar el comando en una nueva consola, lo abrimos usando 'xterm' o 'gnome-terminal'.
         if [ "$respuesta" = "s" ]; then
             if [ "$(which xterm)" != "" ]; then
                 xterm -e "$comando"
@@ -48,33 +44,27 @@ while true; do
                 echo "No se encontró un terminal compatible"
                 read -p "Presione Enter para continuar..."
             fi
-        else
+        # Si el usuario desea ejecutar el comando en la consola actual, lo ejecutamos usando 'eval'.
+        elif [ "$respuesta" = "n" ]; then
             if [ "$comando" = "exit 0" ]; then
-                break
+                break # Si el usuario selecciona la opción de salir, salimos del bucle 'while' y terminamos la ejecución del script.
             else
                 eval "$comando" -r
-                read -p "Presione Enter para continuar..."
+                read read -p "Presione Enter para continuar..."
             fi
+        # Si el usuario no ingresó 's' o 'n', le informamos que su respuesta es inválida y pedimos que intente de nuevo.
+        else
+            echo "Respuesta inválida. Por favor, introduzca 's' o 'n'."
+            read -p "Presione Enter para continuar..."
         fi
+    # Si el usuario ingresó una opción inválida, le informamos y pedimos que intente de nuevo.
     else
-        clear
-        echo "Opción inválida"
+        echo "Opción inválida. Por favor, introduzca un número válido."
         read -p "Presione Enter para continuar..."
     fi
 done
 
-
-# Tienes razón, hay un problema en la línea 29 del código actualizado que puede causar que la función "eval" falle al tratar de ejecutar el comando "exit 0" después de salir del ciclo while. Esto se debe a que "eval" interpreta el comando "exit 0" como dos argumentos separados.
-
-# Para solucionar este problema, podemos usar el comando "exec" en lugar de "eval" para ejecutar el comando en la terminal actual.
-
-# /////////////////////////////////////////////
-# /////////////////////////////////////////////
-
-# ERROR:
-# El comando es: exit 0
-# ¿Desea ejecutar este comando en una nueva consola? (s/n): n
-# ./menubase-simplificado-plantilla3-2-3-4-consola.sh: línea 41: exit: demasiados argumentos
+# Código sin comentarios
 
 # opciones=(
 #     "Mostrar directorio:|ls"
@@ -88,6 +78,7 @@ done
 #     "Archivos que acaban en dos dígitos:|ls *[0-9][0-9].*"
 #     "Archivos que acaban en una mayúscula:|ls *[A-Z].*"
 #     "Archivos que acaban en una minúscula o mayúscula:|ls *[a-zA-Z].*"
+#     "Ejecutar script menubase-simplificado.sh:|./menubase-simplificado.sh"
 #     "Salir:|exit 0"
 # )
 
@@ -99,7 +90,7 @@ done
 #     done
 #     read opcion
 
-#     if [ $opcion -ge 0 ] && [ $opcion -lt ${#opciones[@]} ]; then
+#     if [[ $opcion =~ ^[0-9]+$ ]] && [ $opcion -ge 0 ] && [ $opcion -lt ${#opciones[@]} ]; then
 #         clear
 #         comando="${opciones[$opcion]#*|}"
 #         echo "El comando es: $comando"
@@ -113,15 +104,19 @@ done
 #                 echo "No se encontró un terminal compatible"
 #                 read -p "Presione Enter para continuar..."
 #             fi
+#         elif [ "$respuesta" = "n" ]; then
+#             if [ "$comando" = "exit 0" ]; then
+#                 break
+#             else
+#                 eval "$comando" -r
+#                 read -p "Presione Enter para continuar..."
+#             fi
 #         else
-#             eval "$comando" -r
+#             echo "Respuesta inválida. Por favor, introduzca 's' o 'n'."
 #             read -p "Presione Enter para continuar..."
 #         fi
 #     else
-#         clear
-#         echo "Opción inválida"
+#         echo "Opción inválida. Por favor, introduzca un número válido."
 #         read -p "Presione Enter para continuar..."
 #     fi
 # done
-
-# En este código modificado, hemos agregado un mensaje que muestra el comando que se va a ejecutar, seguido de una pregunta al usuario para ejecutar el comando en una nueva consola. Si el usuario responde "s", el script verifica si "xterm" o "gnome-terminal" están instalados y ejecuta el comando en una nueva ventana de terminal usando una de estas herramientas. Si el usuario responde "n", el script ejecuta el comando en la terminal actual.
