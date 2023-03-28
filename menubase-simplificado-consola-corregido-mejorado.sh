@@ -22,7 +22,7 @@ opciones=(
 while true; do
     clear
     echo "Ingrese el número de la opción deseada:"
-    for i in ${!opciones[@]}; do
+    for i in "${!opciones[@]}"; do
         echo "$i. ${opciones[$i]%%|*}" # Imprimimos el índice de la opción y su nombre (sin el comando correspondiente).
     done
     read opcion
@@ -38,8 +38,10 @@ while true; do
         if [ "$respuesta" = "s" ]; then
             if [ "$(which xterm)" != "" ]; then
                 xterm -e "$comando"
+                sleep 3 && pkill xterm   # para xterm
             elif [ "$(which gnome-terminal)" != "" ]; then
                 gnome-terminal -- bash -c "$comando; exec bash"
+                sleep 3 && pkill gnome-terminal  # para gnome-terminal
             else
                 echo "No se encontró un terminal compatible"
                 read -p "Presione Enter para continuar..."

@@ -29,7 +29,7 @@ opciones=(
 while true; do
     clear
     echo "Ingrese el número de la opción deseada:"
-    for i in ${!opciones[@]}; do
+    for i in "${!opciones[@]}"; do
         echo "$i. ${opciones[$i]%%|*}" # Mostramos el número de la opción y el nombre de la opción
     done
     read opcion

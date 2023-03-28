@@ -14,7 +14,7 @@ opciones=(
     "Archivos que acaban en dos dígitos:|ls *[0-9][0-9].*"
     "Archivos que acaban en una mayúscula:|ls *[A-Z].*"
     "Archivos que acaban en una minúscula o mayúscula:|ls *[a-zA-Z].*"
-    "Ejecutar script menubase-simplificado.sh:| ./menubase-simplificado.sh"
+    "Ejecutar script menubase-simplificado.sh:| bash ./menubase-simplificado.sh"
     "Salir:|exit 0"
 )
 

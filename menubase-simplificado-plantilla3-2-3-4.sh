@@ -21,7 +21,7 @@ while true; do
     # Limpiamos la pantalla y mostramos las opciones disponibles.
     clear
     echo "Ingrese el número de la opción deseada:"
-    for i in ${!opciones[@]}; do
+    for i in "${!opciones[@]}"; do
         echo "$i. ${opciones[$i]%%|*}" # Imprimimos el índice de la opción y su nombre (sin el comando correspondiente).
     done
     read opcion
